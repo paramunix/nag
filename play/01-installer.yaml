@@ -54,6 +54,7 @@
 
     - name: Plugins list
       command: ls /usr/lib64/nagios/plugins
+      command: yum install -y nagios nagios-devel nagios-plugins* openssl nrpe
 
 
 
