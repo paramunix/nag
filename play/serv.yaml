@@ -1,0 +1,16 @@
+---
+- hosts: localhost
+  become: no
+
+
+  tasks:
+    
+    - service:
+       name: nagios 
+       state: reload
+       name: httpd
+       state: started
+
+
+
+
