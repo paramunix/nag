@@ -25,6 +25,12 @@
     - group:
        name: nagios
        state: present
+
+    - group:
+       name: apache
+       state: present
+
+    - group:
        name: nagcmd
        state: present
 
