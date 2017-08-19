@@ -1,0 +1,14 @@
+yum install kernel-headers --disableexcludes=all
+
+1. enable kernel headers only for installation 
+yum install kernel-headers --disableexcludes=all
+
+2. htpasswd nagiosadmin (created already)
+
+https://assets.nagios.com/downloads/nagioscore/docs/nagioscore/3/en/startstop.html
+
+https://assets.nagios.com/downloads/nagioscore/docs/nagioscore/4/en/security.html  //SECURITY
+
+
+READ FAQs
+https://www.nagios.org/documentation/

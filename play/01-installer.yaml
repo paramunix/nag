@@ -67,5 +67,11 @@
       command: service nagios start
 
 
+    - name: Starting Nagios Server
+      command: setenforce Permissive
+
+    - name: Starting Nagios Server
+      command: usermod -a -G nagcmd apache
+
 
 

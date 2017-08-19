@@ -14,6 +14,7 @@ echo
 yum install -y ansible
 echo "====================================================="
 echo
+yum install kernel-headers --disableexcludes=all
 ansible-playbook ./play/01-installer.yaml
 echo 
 echo
@@ -26,4 +27,8 @@ rpm -qa|grep httpd
 echo "Service Status"
 ps -ef |egrep -i "nagios|httpd"
 
+yum install nagios nagios-devel nagios-plugins* gd gd-devel php gcc glibc glibc-common openssl
 
+echo
+echo
+nagios -v /etc/nagios/nagios.cfg
