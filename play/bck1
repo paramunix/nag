@@ -1,0 +1,30 @@
+---
+- hosts: localhost
+  become: no
+
+
+  tasks:
+    - copy:
+       src: /var/proj/play/master-repo.repo
+       dest: /etc/yum.repos.d/master.repo
+
+
+    - name: Yum Updater
+      command: yum clean all
+      command: yum -y update 
+
+
+    - name: httpd install
+      yum: name=httpd state=present
+
+    - name: php install
+      yum: name=php state=present
+
+    - name: GCC install
+      yum: name=gcc-* state=present
+
+    - name: GLIBC install
+      yum: name=glibc state=present
+
+    - name: glibc-Common install
+      yum: name=glibc-common state=present

@@ -1,0 +1,55 @@
+---
+- hosts: localhost
+  become: no
+
+
+  tasks:
+    - copy:
+       src: /var/proj/play/master-repo.repo
+       dest: /etc/yum.repos.d/master.repo
+
+
+    - name: Yum Updater
+      command: yum clean all
+      command: yum -y update 
+
+
+    - name:  Installs
+      yum: name=httpd state=present
+      yum: name=php state=present
+      yum: name=gcc-* state=present
+      yum: name=glibc state=present
+      yum: name=glibc-common state=present
+      yum: name=gd* state=present
+
+    - group:
+       name: nagios
+       state: present
+       name: nagcmd
+       state: present
+
+    - user:
+       name: nagios
+       state: present
+       groups: nagios,nagcmd
+
+    - user:
+       name: apache
+       state: present
+       groups: apache,nagcmd
+
+
+    - name:  Nag-Installs
+      yum: name=nagios state=present
+      yum: name=nagios-devel state=present
+      yum: name=nagios-plugins* state=present
+      yum: name=openssl state=present
+      yum: name=nrpe state=present
+
+    - name: Plugins list
+      command: ls /usr/lib64/nagios/plugins
+
+
+
+
+
