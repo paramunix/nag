@@ -1,1 +1,276 @@
 https://hobo.house/2016/06/24/automate-nagios-deployment-with-ansible/
+
+
+[root@dixidee4 ansible-nagios]# ansible-playbook -i hosts install/nagios.yml
+
+PLAY [all:!switches:!oobservers:!idrac:!supermicro-6048r:!supermicro-6018r:!supermicro-1028r] ***
+
+TASK [Gathering Facts] *****************************************************************
+ok: [dixidee6.mylabserver.com]
+ok: [localhost]
+
+PLAY [all:!switches:!oobservers:!nagios:!idrac:!supermicro-6048r:!supermicro-6018r:!supermicro-1028r] ***
+
+TASK [Gathering Facts] *****************************************************************
+ok: [dixidee6.mylabserver.com]
+
+TASK [nagios-client : Check Operating System] ******************************************
+skipping: [dixidee6.mylabserver.com]
+
+TASK [nagios-client : Import EPEL GPG Key] *********************************************
+ok: [dixidee6.mylabserver.com]
+
+TASK [nagios-client : Check for EPEL repo] *********************************************
+ok: [dixidee6.mylabserver.com]
+
+TASK [nagios-client : Install NRPE and Common Plugins] *********************************
+ok: [dixidee6.mylabserver.com] => (item=[u'nrpe', u'nagios-plugins-load', u'nagios-plugins-nrpe', u'nagios-plugins-uptime', u'nagios-plugins-swap', u'nagios-plugins-procs', u'nagios-plugins-users', u'nagios-plugins-disk', u'nagios-plugins-tcp', u'libsemanage-python'])
+
+TASK [nagios-client : Setup NRPE client configuration] *********************************
+changed: [dixidee6.mylabserver.com]
+
+TASK [nagios-client : Apply SELinux boolean nagios_run_sudo] ***************************
+changed: [dixidee6.mylabserver.com]
+
+TASK [nagios-client : Apply SELinux boolean logging_syslogd_run_nagios_plugins] ********
+changed: [dixidee6.mylabserver.com]
+
+TASK [nagios-client : Determine if firewalld is in use] ********************************
+fatal: [dixidee6.mylabserver.com]: FAILED! => {"censored": "the output has been hidden due to the fact that 'no_log: true' was specified for this result"}
+...ignoring
+
+TASK [nagios-client : Determine if firewalld is active] ********************************
+changed: [dixidee6.mylabserver.com]
+
+TASK [nagios-client : Determine if TCP/5666 is already active] *************************
+fatal: [dixidee6.mylabserver.com]: FAILED! => {"censored": "the output has been hidden due to the fact that 'no_log: true' was specified for this result"}
+...ignoring
+
+TASK [nagios-client : Add firewall rule for TCP/5666 (firewalld)] **********************
+skipping: [dixidee6.mylabserver.com] => (item=firewall-cmd --reload) 
+skipping: [dixidee6.mylabserver.com] => (item=firewall-cmd --zone=public --add-port=5666/tcp --permanent) 
+
+TASK [nagios-client : check firewall rules for TCP/5666 (iptables-services)] ***********
+changed: [dixidee6.mylabserver.com]
+
+TASK [nagios-client : Add firewall rule for TCP/5666 (iptables-services)] **************
+skipping: [dixidee6.mylabserver.com]
+
+TASK [nagios-client : Restart iptables-services for TCP/5666 (iptables-services)] ******
+skipping: [dixidee6.mylabserver.com]
+
+TASK [nagios-client : Start NRPE service] **********************************************
+changed: [dixidee6.mylabserver.com]
+
+TASK [nagios-client : Set NRPE to start on boot] ***************************************
+changed: [dixidee6.mylabserver.com]
+
+PLAY [nagios] **************************************************************************
+
+TASK [Gathering Facts] *****************************************************************
+ok: [localhost]
+
+TASK [nagios : Check Operating System] *************************************************
+skipping: [localhost]
+
+TASK [nagios : Import EPEL GPG Key] ****************************************************
+ok: [localhost]
+
+TASK [nagios : Check for EPEL repo] ****************************************************
+ok: [localhost]
+
+TASK [nagios : Install HTTPD and OpenSSL] **********************************************
+ok: [localhost] => (item=[u'httpd', u'httpd-tools', u'mod_ssl', u'openssl', u'openssl-libs', u'net-snmp-utils', u'perl-IPC-Run', u'perl-IO-Tty', u'freeipmi', u'OpenIPMI-modalias'])
+
+TASK [nagios : Setup nagios SSL HTTPD vhost] *******************************************
+ok: [localhost]
+
+TASK [nagios : Install nagios packages and common plugins] *****************************
+ok: [localhost] => (item=[u'nagios', u'nagios-common', u'nagios-plugins-ssh', u'nagios-plugins-tcp', u'nagios-plugins-http', u'nagios-plugins-load', u'nagios-plugins-nrpe', u'nagios-plugins-uptime', u'nagios-plugins-swap', u'nagios-plugins-ping', u'nagios-plugins-procs', u'nagios-plugins-users', u'nagios-plugins-disk', u'libsemanage-python'])
+
+TASK [nagios : Check nagios Users] *****************************************************
+ok: [localhost]
+
+TASK [nagios : Create empty password file] *********************************************
+ok: [localhost]
+
+TASK [nagios : Create nagios admin user] ***********************************************
+changed: [localhost]
+
+TASK [nagios : Create nagios guest user] ***********************************************
+changed: [localhost]
+
+TASK [nagios : Configure nagios main configuration] ************************************
+ok: [localhost]
+
+TASK [nagios : Copy idrac check plugin] ************************************************
+ok: [localhost]
+
+TASK [nagios : Configure Dell idrac snmp mib file] *************************************
+ok: [localhost]
+
+TASK [nagios : Create nagios socket tmp files] *****************************************
+ok: [localhost]
+
+TASK [nagios : Configure SuperMicro IPMI Check] ****************************************
+ok: [localhost]
+
+TASK [nagios : Generate the SuperMicro monitoring template] ****************************
+ok: [localhost] => (item=ipmi.cfg)
+
+TASK [nagios : Configure nagios localhost monitoring] **********************************
+ok: [localhost]
+
+TASK [nagios : Create generic nagios services config] **********************************
+ok: [localhost]
+
+TASK [nagios : Generate the nagios monitoring templates] *******************************
+ok: [localhost] => (item=oobservers.cfg)
+ok: [localhost] => (item=switches.cfg)
+ok: [localhost] => (item=webservers.cfg)
+changed: [localhost] => (item=servers.cfg)
+ok: [localhost] => (item=commands.cfg)
+ok: [localhost] => (item=elkservers.cfg)
+ok: [localhost] => (item=elasticsearch.cfg)
+ok: [localhost] => (item=idrac.cfg)
+ok: [localhost] => (item=supermicro-6018r.cfg)
+ok: [localhost] => (item=supermicro-6048r.cfg)
+ok: [localhost] => (item=supermicro-1028r.cfg)
+
+TASK [nagios : Generate the nagios contact template] ***********************************
+changed: [localhost] => (item=contacts.cfg)
+
+TASK [nagios : Generate the nagios user CGI template] **********************************
+changed: [localhost] => (item=cgi.cfg)
+
+TASK [nagios : Apply SELinux boolean nagios_run_sudo] **********************************
+changed: [localhost]
+
+TASK [nagios : Apply SELinux boolean logging_syslogd_run_nagios_plugins] ***************
+changed: [localhost]
+
+TASK [nagios : Create nagios socket tmp files] *****************************************
+changed: [localhost]
+
+TASK [nagios : Create nagios results directory] ****************************************
+changed: [localhost]
+
+TASK [nagios : Check/fix systemd service file] *****************************************
+changed: [localhost]
+
+TASK [nagios : Set HTTP Listen Port] ***************************************************
+ok: [localhost]
+
+TASK [nagios : Reload Systemd if needed] ***********************************************
+changed: [localhost]
+
+TASK [nagios : Determine if firewalld is in use] ***************************************
+fatal: [localhost]: FAILED! => {"censored": "the output has been hidden due to the fact that 'no_log: true' was specified for this result"}
+...ignoring
+
+TASK [nagios : Determine if firewalld is active] ***************************************
+changed: [localhost]
+
+TASK [nagios : Determine if TCP/80 is already active] **********************************
+fatal: [localhost]: FAILED! => {"censored": "the output has been hidden due to the fact that 'no_log: true' was specified for this result"}
+...ignoring
+
+TASK [nagios : Add firewall rule for TCP/80 (firewalld)] *******************************
+skipping: [localhost] => (item=firewall-cmd --reload) 
+skipping: [localhost] => (item=firewall-cmd --zone=public --add-port=80/tcp --permanent) 
+
+TASK [nagios : check firewall rules for TCP/80 (iptables-services)] ********************
+changed: [localhost]
+
+TASK [nagios : Add firewall rule for TCP/80 (iptables-services)] ***********************
+skipping: [localhost]
+
+TASK [nagios : Restart iptables-services for TCP/80 (iptables-services)] ***************
+skipping: [localhost]
+
+TASK [nagios : Determine if TCP/443 is already active] *********************************
+fatal: [localhost]: FAILED! => {"censored": "the output has been hidden due to the fact that 'no_log: true' was specified for this result"}
+...ignoring
+
+TASK [nagios : Add firewall rule for TCP/443 (firewalld)] ******************************
+skipping: [localhost] => (item=firewall-cmd --zone=public --add-port=443/tcp --permanent) 
+skipping: [localhost] => (item=firewall-cmd --reload) 
+
+TASK [nagios : check firewall rules for TCP/443 (iptables-services)] *******************
+changed: [localhost]
+
+TASK [nagios : Add firewall rule for TCP/443 (iptables-services)] **********************
+skipping: [localhost]
+
+TASK [nagios : Restart iptables-services for TCP/443 (iptables-services)] **************
+skipping: [localhost]
+
+TASK [nagios : Start nagios service] ***************************************************
+changed: [localhost]
+
+TASK [nagios : Set nagios to start on boot] ********************************************
+changed: [localhost]
+
+TASK [nagios : Setup HTTPD service] ****************************************************
+changed: [localhost]
+
+TASK [nagios : Restart HTTPD service] **************************************************
+changed: [localhost]
+
+TASK [nagios : Display nagios information] *********************************************
+ok: [localhost] => {
+    "msg": "You can access nagios at https://ec2-13-228-71-198.ap-southeast-1.compute.amazonaws.com/nagios using nagiosadmin / changeme"
+}
+
+TASK [nagios : Display nagios guest information] ***************************************
+ok: [localhost] => {
+    "msg": "Guest read only users at https://ec2-13-228-71-198.ap-southeast-1.compute.amazonaws.com/nagios using guest / guest"
+}
+
+TASK [nagios : Display user password change information] *******************************
+ok: [localhost] => {
+    "msg": "Run the following to change the nagios password --> htpasswd /etc/nagios/passwd nagiosadmin"
+}
+
+PLAY RECAP *****************************************************************************
+dixidee6.mylabserver.com   : ok=14   changed=9    unreachable=0    failed=0   
+localhost                  : ok=42   changed=21   unreachable=0    failed=0   
+
+(reverse-i-search)`ht': git clone ^Ctps://github.com/sadsfae/ansible-nagios
+[root@dixidee4 ansible-nagios]# htpasswd -c /usr/local/nagios/etc/htpasswd.users nagiosadmin
+htpasswd: cannot create file /usr/local/nagios/etc/htpasswd.users
+[root@dixidee4 ansible-nagios]# htpasswd -c /usr/local/ nagiosadmin
+bin/     games/   lib/     libexec/ share/   
+etc/     include/ lib64/   sbin/    src/     
+[root@dixidee4 ansible-nagios]# htpasswd -c /usr/local/ nagiosadmin
+bin/     games/   lib/     libexec/ share/   
+etc/     include/ lib64/   sbin/    src/     
+[root@dixidee4 ansible-nagios]# htpasswd -c /usr/l nagiosadmin
+lib/     lib64/   libexec/ local/   
+[root@dixidee4 ansible-nagios]# htpasswd -c /usr/ nagiosadmin
+bin/     games/   lib/     libexec/ sbin/    src/     
+etc/     include/ lib64/   local/   share/   tmp/     
+[root@dixidee4 ansible-nagios]# htpasswd -c /usr/lib64/ nagiosadmin
+Display all 1294 possibilities? (y or n)
+[root@dixidee4 ansible-nagios]# htpasswd -c /usr/lib64/na nagiosadmin
+nagios/   nautilus/ 
+[root@dixidee4 ansible-nagios]# htpasswd -c /usr/lib64/na nagiosadmin
+nagios/   nautilus/ 
+[root@dixidee4 ansible-nagios]# htpasswd -c /usr/lib64/na nagiosadmin
+nagios/   nautilus/ 
+[root@dixidee4 ansible-nagios]# htpasswd -c /usr/lib64/nagios/ nagiosadmin
+cgi-bin/     libnagios.a  plugins/     
+[root@dixidee4 ansible-nagios]# htpasswd -c /usr/lib64/nagios/ nagiosadmin
+cgi-bin/     libnagios.a  plugins/     
+[root@dixidee4 ansible-nagios]# htpasswd -c /usr/lib64/nagios/^Cagiosadmin
+[root@dixidee4 ansible-nagios]# 
+[root@dixidee4 ansible-nagios]# 
+[root@dixidee4 ansible-nagios]# htpasswd -c /usr/lib64/nagios^C
+[root@dixidee4 ansible-nagios]# /usr/local/nagiosc^C
+[root@dixidee4 ansible-nagios]# 
+[root@dixidee4 ansible-nagios]# 
+[root@dixidee4 ansible-nagios]# cd ^C
+[root@dixidee4 ansible-nagios]# 
+[root@dixidee4 ansible-nagios]# find /usr -name 'htpasswd.users '
+[root@dixidee4 ansible-nagios]# 
+
